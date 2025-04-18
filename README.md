@@ -20,4 +20,4 @@ Em caso de dúvidas ou sugestões, entre em contato com:
 
 ---
 
-Obrigado por visitar o projeto! 😊
+Obrigado :) 
