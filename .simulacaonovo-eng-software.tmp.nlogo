@@ -3,6 +3,7 @@ globals [
   languages-count
   vitorias-devs
   vitorias-langs
+  gupys-count
 ]
 
 turtles-own [
@@ -48,11 +49,19 @@ to setup
 
   create-turtles num-ias [
     setxy random-xcor random-ycor
-    set shape ""
+    set shape "star"
     set color white
     set tipo "ia"
     set morto? false
     set size 1.1
+  ]
+    create-turtles num-gupys [
+    setxy random-xcor random-ycor
+    set shape "face happy"
+    set color red
+    set tipo "gupy"
+    set morto? false
+    set size 1.3
   ]
 
   atualizar-contadores
@@ -91,6 +100,25 @@ to go
         ask lang [ set color color - 2 ]
       ]
     ]
+        ; Interação com Gupy
+    let gupy one-of turtles-here with [tipo = "gupy" and not morto?]
+    if gupy != nobody [
+      ; Reduz atributos pela metade
+      set experiencia experiencia / 2
+      set habilidade habilidade / 2
+      set agilidade agilidade / 2
+
+      ; Elimina se experiência < 2
+      if experiencia < 2 [
+        set morto? true
+        die
+      ]
+
+      ask gupy [
+        set morto? true
+      ]
+    ]
+
   ]
 
   ; Interação: Devs encontram IA
@@ -135,10 +163,7 @@ to go
   wait 0.1
 end
 
-to atualizar-contadores
-  set devs count turtles with [tipo = "dev" and not morto?]
-  set languages-count count turtles with [tipo = "language" and not morto?]
-end
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 637
@@ -393,8 +418,8 @@ num-ias
 num-ias
 0
 100
-50.0
-50
+5.0
+1
 1
 NIL
 HORIZONTAL
