@@ -128,7 +128,7 @@ to go
     if helper-ia != nobody [
       let ganho one-of ["experiencia" "agilidade" "habilidade"]
       if ganho = "experiencia" [ set experiencia experiencia + 1 ]
-      if ganho = "agilidade"   [ set agilidade agilidade + 1 ]
+      if ganho = "agilidade"   [ set agilidade agilidade +  ]
       if ganho = "habilidade"  [ set habilidade habilidade + 1 ]
 
       ask helper-ia [ set morto? true ]
@@ -231,9 +231,9 @@ NIL
 1
 
 SLIDER
-15
+20
 84
-187
+192
 117
 num-devs
 num-devs
@@ -246,9 +246,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-16
+21
 133
-188
+193
 166
 num-langs
 num-langs
@@ -261,9 +261,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-16
+21
 182
-188
+193
 215
 dev-experiencia-max
 dev-experiencia-max
@@ -276,9 +276,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
+20
 231
-187
+195
 264
 dev-agilidade-max
 dev-agilidade-max
@@ -291,9 +291,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
+20
 279
-187
+196
 312
 dev-habilidade-max
 dev-habilidade-max
@@ -323,7 +323,7 @@ HORIZONTAL
 SLIDER
 208
 137
-386
+400
 170
 language-facilidade-max
 language-facilidade-max
@@ -395,9 +395,9 @@ vitorias-langs
 11
 
 PLOT
-211
+209
 432
-411
+461
 582
 Progresso da Simulação
 1000
@@ -414,9 +414,9 @@ PENS
 "Linguagens" 1.0 0 -7500403 true "" ""
 
 SLIDER
-12
+17
 332
-184
+199
 365
 num-ias
 num-ias
@@ -429,9 +429,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-11
+16
 380
-183
+194
 413
 num-gupys
 num-gupys
