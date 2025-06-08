@@ -46,18 +46,28 @@ to setup
     set size 1.2
   ]
 
+  create-turtles num-ias [
+    setxy random-xcor random-ycor
+    set shape ""
+    set color white
+    set tipo "ia"
+    set morto? false
+    set size 1.1
+  ]
+
   atualizar-contadores
 end
 
 to go
   tick
 
-  ; Movimento com rotação aleatória e velocidade reduzida
+  ; Movimento aleatório
   ask turtles with [not morto?] [
     rt random 50 - 25
     fd 0.3
   ]
 
+  ; Combate: Devs vs Linguagens
   ask turtles with [tipo = "dev" and not morto?] [
     let lang one-of turtles-here with [tipo = "language" and not morto?]
 
@@ -74,6 +84,7 @@ to go
           set vitorias-devs vitorias-devs + 1
         ]
         set color blue + 2
+        set experiencia experiencia + 1 ; ganha experiência ao vencer
       ] [
         set morto? true
         set vitorias-langs vitorias-langs + 1
@@ -82,10 +93,28 @@ to go
     ]
   ]
 
+  ; Interação: Devs encontram IA
+  ask turtles with [tipo = "dev" and not morto?] [
+    let helper-ia one-of turtles-here with [tipo = "ia" and not morto?]
+
+    if helper-ia != nobody [
+      let ganho one-of ["experiencia" "agilidade" "habilidade"]
+      if ganho = "experiencia" [ set experiencia experiencia + 1 ]
+      if ganho = "agilidade"   [ set agilidade agilidade + 1 ]
+      if ganho = "habilidade"  [ set habilidade habilidade + 1 ]
+
+      ask helper-ia [ set morto? true ]
+      set color violet
+    ]
+  ]
+
+  ; Remover mortos
   ask turtles with [morto?] [ die ]
 
+  ; Atualizar contadores
   atualizar-contadores
 
+  ; Verificar fim do jogo
   if devs = 0 [
     user-message (word "Linguagens venceram! Restaram: " languages-count)
     stop
@@ -96,13 +125,14 @@ to go
     stop
   ]
 
+  ; Plotar
   set-current-plot "Progresso da Simulação"
   set-current-plot-pen "Devs"
   plot devs
   set-current-plot-pen "Linguagens"
   plot languages-count
 
-  wait 0.1 ; <-- PAUSA PARA REDUZIR A VELOCIDADE GLOBAL DA SIMULAÇÃO
+  wait 0.1
 end
 
 to atualizar-contadores
@@ -111,10 +141,10 @@ to atualizar-contadores
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-998
-10
-1435
-448
+637
+43
+1074
+481
 -1
 -1
 13.0
@@ -180,7 +210,7 @@ num-devs
 num-devs
 1
 100
-100.0
+30.0
 1
 1
 NIL
@@ -195,7 +225,7 @@ num-langs
 num-langs
 1
 100
-100.0
+20.0
 1
 1
 NIL
@@ -210,7 +240,7 @@ dev-experiencia-max
 dev-experiencia-max
 1
 20
-19.0
+3.0
 1
 1
 NIL
@@ -255,7 +285,7 @@ language-performance-max
 language-performance-max
 1
 10
-9.0
+10.0
 1
 1
 NIL
@@ -314,10 +344,10 @@ languages-count
 11
 
 MONITOR
-214
-315
-322
-360
+210
+311
+318
+356
 vitórias dos devs
 vitorias-devs
 17
@@ -325,10 +355,10 @@ vitorias-devs
 11
 
 MONITOR
-340
-315
-479
-360
+335
+310
+474
+355
 vitórias das linguagens
 vitorias-langs
 17
@@ -353,6 +383,21 @@ false
 PENS
 "Devs" 1.0 0 -13791810 true "" ""
 "Linguagens" 1.0 0 -7500403 true "" ""
+
+SLIDER
+12
+332
+184
+365
+num-ias
+num-ias
+0
+100
+50.0
+50
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
