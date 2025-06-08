@@ -3,6 +3,7 @@ globals [
   languages-count
   vitorias-devs
   vitorias-langs
+  gupys-count
 ]
 
 turtles-own [
@@ -46,18 +47,36 @@ to setup
     set size 1.2
   ]
 
+  create-turtles num-ias [
+    setxy random-xcor random-ycor
+    set shape "star"
+    set color white
+    set tipo "ia"
+    set morto? false
+    set size 1.1
+  ]
+    create-turtles num-gupys [
+    setxy random-xcor random-ycor
+    set shape "face happy"
+    set color red
+    set tipo "gupy"
+    set morto? false
+    set size 1.3
+  ]
+
   atualizar-contadores
 end
 
 to go
   tick
 
-  ; Movimento com rotação aleatória e velocidade reduzida
+  ; Movimento aleatório
   ask turtles with [not morto?] [
     rt random 50 - 25
     fd 0.3
   ]
 
+  ; Combate: Devs vs Linguagens
   ask turtles with [tipo = "dev" and not morto?] [
     let lang one-of turtles-here with [tipo = "language" and not morto?]
 
@@ -74,18 +93,56 @@ to go
           set vitorias-devs vitorias-devs + 1
         ]
         set color blue + 2
+        set experiencia experiencia + 1 ; ganha experiência ao vencer
       ] [
         set morto? true
         set vitorias-langs vitorias-langs + 1
         ask lang [ set color color - 2 ]
       ]
     ]
+        ; Interação com Gupy
+    let gupy one-of turtles-here with [tipo = "gupy" and not morto?]
+    if gupy != nobody [
+      ; Reduz atributos pela metade
+      set experiencia experiencia / 2
+      set habilidade habilidade / 2
+      set agilidade agilidade / 2
+
+      ; Elimina se experiência < 2
+      if experiencia < 2 [
+        set morto? true
+        die
+      ]
+
+      ask gupy [
+        set morto? true
+      ]
+    ]
+
   ]
 
+  ; Interação: Devs encontram IA
+  ask turtles with [tipo = "dev" and not morto?] [
+    let helper-ia one-of turtles-here with [tipo = "ia" and not morto?]
+
+    if helper-ia != nobody [
+      let ganho one-of ["experiencia" "agilidade" "habilidade"]
+      if ganho = "experiencia" [ set experiencia experiencia + 1 ]
+      if ganho = "agilidade"   [ set agilidade agilidade + 1 ]
+      if ganho = "habilidade"  [ set habilidade habilidade + 1 ]
+
+      ask helper-ia [ set morto? true ]
+      set color violet
+    ]
+  ]
+
+  ; Remover mortos
   ask turtles with [morto?] [ die ]
 
+  ; Atualizar contadores
   atualizar-contadores
 
+  ; Verificar fim do jogo
   if devs = 0 [
     user-message (word "Linguagens venceram! Restaram: " languages-count)
     stop
@@ -96,25 +153,27 @@ to go
     stop
   ]
 
+  ; Plotar
   set-current-plot "Progresso da Simulação"
   set-current-plot-pen "Devs"
   plot devs
   set-current-plot-pen "Linguagens"
   plot languages-count
 
-  wait 0.1 ; <-- PAUSA PARA REDUZIR A VELOCIDADE GLOBAL DA SIMULAÇÃO
+  wait 0.1
 end
 
 to atualizar-contadores
   set devs count turtles with [tipo = "dev" and not morto?]
   set languages-count count turtles with [tipo = "language" and not morto?]
+  set gupys-count count turtles with [tipo = "gupy" and not morto?]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-998
-10
-1435
-448
+637
+43
+1074
+481
 -1
 -1
 13.0
@@ -172,54 +231,54 @@ NIL
 1
 
 SLIDER
-15
+20
 84
-187
+192
 117
 num-devs
 num-devs
 1
 100
-100.0
+30.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-16
+21
 133
-188
+193
 166
 num-langs
 num-langs
 1
 100
-100.0
+20.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-16
+21
 182
-188
+193
 215
 dev-experiencia-max
 dev-experiencia-max
 1
 20
-19.0
+5.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-15
+20
 231
-187
+195
 264
 dev-agilidade-max
 dev-agilidade-max
@@ -232,9 +291,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
+20
 279
-187
+196
 312
 dev-habilidade-max
 dev-habilidade-max
@@ -255,7 +314,7 @@ language-performance-max
 language-performance-max
 1
 10
-9.0
+10.0
 1
 1
 NIL
@@ -264,7 +323,7 @@ HORIZONTAL
 SLIDER
 208
 137
-386
+400
 170
 language-facilidade-max
 language-facilidade-max
@@ -314,10 +373,10 @@ languages-count
 11
 
 MONITOR
-214
-315
-322
-360
+210
+311
+324
+356
 vitórias dos devs
 vitorias-devs
 17
@@ -325,10 +384,10 @@ vitorias-devs
 11
 
 MONITOR
-340
-315
-479
-360
+338
+310
+458
+355
 vitórias das linguagens
 vitorias-langs
 17
@@ -336,10 +395,10 @@ vitorias-langs
 11
 
 PLOT
-211
-376
-411
-526
+209
+432
+461
+582
 Progresso da Simulação
 1000
 0
@@ -353,6 +412,58 @@ false
 PENS
 "Devs" 1.0 0 -13791810 true "" ""
 "Linguagens" 1.0 0 -7500403 true "" ""
+
+SLIDER
+17
+332
+199
+365
+num-ias
+num-ias
+0
+100
+8.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+16
+380
+194
+413
+num-gupys
+num-gupys
+0
+20
+5.0
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+210
+372
+326
+417
+gupys
+gupys-count
+17
+1
+11
+
+MONITOR
+339
+371
+461
+416
+IAs
+num-ias
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?

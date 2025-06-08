@@ -163,7 +163,11 @@ to go
   wait 0.1
 end
 
-
+to atualizar-contadores
+  set devs count turtles with [tipo = "dev" and not morto?]
+  set languages-count count turtles with [tipo = "language" and not morto?]
+  set gupys-count count turtles with [tipo = "gupy" and not morto?]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 637
@@ -265,7 +269,7 @@ dev-experiencia-max
 dev-experiencia-max
 1
 20
-3.0
+5.0
 1
 1
 NIL
@@ -371,7 +375,7 @@ languages-count
 MONITOR
 210
 311
-318
+324
 356
 vitórias dos devs
 vitorias-devs
@@ -380,9 +384,9 @@ vitorias-devs
 11
 
 MONITOR
-335
+338
 310
-474
+458
 355
 vitórias das linguagens
 vitorias-langs
@@ -392,9 +396,9 @@ vitorias-langs
 
 PLOT
 211
-376
+432
 411
-526
+582
 Progresso da Simulação
 1000
 0
@@ -418,11 +422,48 @@ num-ias
 num-ias
 0
 100
+8.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+11
+380
+183
+413
+num-gupys
+num-gupys
+0
+20
 5.0
 1
 1
 NIL
 HORIZONTAL
+
+MONITOR
+210
+372
+326
+417
+gupys
+gupys-count
+17
+1
+11
+
+MONITOR
+339
+371
+461
+416
+IAs
+num-ias
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
